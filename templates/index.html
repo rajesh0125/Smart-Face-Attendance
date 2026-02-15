@@ -1,0 +1,412 @@
+[file name]: index.html
+[file content begin]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Attendance System | Home</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+            background: #0b1120;
+        }
+
+        /* Background Image with Overlay - Matching attendance page */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .background img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(11, 17, 32, 0.92) 0%, rgba(25, 33, 50, 0.92) 100%);
+            backdrop-filter: blur(3px);
+            
+        }
+
+        /* Main Container */
+        .home-container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            width: 90%;
+            margin: 20px;
+        }
+
+        /* Glass Card Effect - Matching attendance page */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 50px 40px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* Header Section */
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto 35px;
+            line-height: 1.6;
+            text-align: center;
+            border-bottom: 1px dashed #cbd5e1;
+            padding-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Stats Section */
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 45px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: #f8fafc;
+            padding: 12px 28px;
+            border-radius: 60px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Choice Cards */
+        .row {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .col-md-6 {
+            flex: 1;
+            min-width: 300px;
+            max-width: 450px;
+        }
+
+        .choice-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 35px 30px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .choice-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.15);
+            border-color: #3b82f6;
+        }
+
+        .card-icon {
+            font-size: 3.2rem;
+            margin-bottom: 20px;
+        }
+
+        .attendance-card .card-icon {
+            color: #22c55e;
+        }
+
+        .register-card .card-icon {
+            color: #3b82f6;
+        }
+
+        .card-title {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+
+        .card-description {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .card-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 25px;
+        }
+
+        .card-features li {
+            color: #475569;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-features i {
+            color: #3b82f6;
+            font-size: 0.9rem;
+        }
+
+        .card-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #0f172a;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .attendance-card .card-btn:hover {
+            background: #22c55e;
+            color: white;
+            border-color: #22c55e;
+            gap: 15px;
+            box-shadow: 0 10px 20px -8px #22c55e80;
+        }
+
+        .register-card .card-btn:hover {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+            gap: 15px;
+            box-shadow: 0 10px 20px -8px #3b82f680;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 45px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .footer i {
+            color: #ef4444;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .glass-card {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .stats-container {
+                gap: 15px;
+            }
+
+            .stat-item {
+                padding: 8px 20px;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+
+            .card-title {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Image with Overlay - Same as attendance page -->
+    <div class="background">
+        <img src="https://images.pexels.com/photos/24971916/pexels-photo-24971916/free-photo-of-children-in-classroom.jpeg?auto=compress&cs=tinysrgb&h=130" alt="University Lecture Background">
+        <div class="overlay"></div>
+    </div>
+
+    <div class="home-container" data-aos="fade-up" data-aos-duration="1000">
+        <div class="glass-card">
+            <!-- Header -->
+            <div class="text-center">
+                <h1>
+                    <i class="fas fa-camera-reels" style="color: #3b82f6;"></i>
+                    Smart Attendance
+                </h1>
+                <p class="subtitle">
+                    <i class="fas fa-shield-alt text-primary"></i>
+                    AI-Powered Face Recognition System
+                </p>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="stats-container">
+                <div class="stat-item" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+                <div class="stat-item" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-number">0.5s</div>
+                    <div class="stat-label">Processing</div>
+                </div>
+                <div class="stat-item" data-aos="fade-up" data-aos-delay="400">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Available</div>
+                </div>
+            </div>
+
+            <!-- Choice Cards -->
+            <div class="row">
+                <!-- Mark Attendance Card -->
+                <div class="col-md-6" data-aos="fade-right" data-aos-delay="200">
+                    <a href="/attendance" class="choice-card attendance-card">
+                        <div class="card-icon">
+                            <i class="fas fa-fingerprint"></i>
+                        </div>
+                        <h2 class="card-title">Mark Attendance</h2>
+                        <p class="card-description">
+                            Quick face recognition with real-time verification
+                        </p>
+                        <ul class="card-features">
+                            <li><i class="fas fa-check-circle"></i> Real-time face detection</li>
+                            <li><i class="fas fa-check-circle"></i> 1-hour cooldown protection</li>
+                            <li><i class="fas fa-check-circle"></i> Live camera feed</li>
+                        </ul>
+                        <span class="card-btn">
+                            Start Scanning <i class="fas fa-arrow-right"></i>
+                        </span>
+                    </a>
+                </div>
+
+                <!-- Register Student Card -->
+                <div class="col-md-6" data-aos="fade-left" data-aos-delay="300">
+                    <a href="/register" class="choice-card register-card">
+                        <div class="card-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <h2 class="card-title">Register Student</h2>
+                        <p class="card-description">
+                            Add new students with face capture and training
+                        </p>
+                        <ul class="card-features">
+                            <li><i class="fas fa-check-circle"></i> 100 face samples</li>
+                            <li><i class="fas fa-check-circle"></i> Automatic training</li>
+                            <li><i class="fas fa-check-circle"></i> Branch-wise registration</li>
+                        </ul>
+                        <span class="card-btn">
+                            Register Now <i class="fas fa-arrow-right"></i>
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <i class="fas fa-shield-alt text-success"></i>
+                <span>Secure • Fast • AI-Powered</span>
+                <i class="fas fa-brain text-primary"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: true,
+            duration: 800,
+            easing: 'ease-in-out'
+        });
+    </script>
+</body>
+</html>
+[file content end]

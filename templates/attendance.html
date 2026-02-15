@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Attendance | Face Recognition</title>
+    
+    <!-- Bootstrap 5 & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            background: #0b1120;
+        }
+
+        /* Background Image with Overlay - Matching both files */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .background img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(11, 17, 32, 0.92) 0%, rgba(25, 33, 50, 0.92) 100%);
+            backdrop-filter: blur(3px);
+        }
+
+        /* Main Container */
+        .attendance-container {
+            position: relative;
+            z-index: 10;
+            max-width: 880px;
+            width: 100%;
+        }
+
+        /* Glass Card - Matching index page */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        h2 {
+            font-weight: 700;
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 20px;
+        }
+
+        /* Camera Section */
+        .camera-section {
+            background: #0f172a;
+            border-radius: 24px;
+            padding: 8px;
+            margin-bottom: 25px;
+            position: relative;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .camera-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            padding: 6px 16px;
+            border-radius: 40px;
+            color: white;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .video-box {
+            border-radius: 20px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            background: #000;
+        }
+
+        .video-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Scan Button */
+        .scan-btn {
+            background: linear-gradient(105deg, #3b82f6, #2563eb);
+            border: none;
+            border-radius: 16px;
+            padding: 18px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: white;
+            width: 100%;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .scan-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 30px -10px #2563eb80;
+        }
+
+        .scan-btn:disabled {
+            opacity: 0.7;
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        /* Status Cards */
+        .status-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+        }
+
+        .status-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .status-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-message {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
+        .status-time {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Initial State Card */
+        .initial-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            text-align: center;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        .initial-icon {
+            font-size: 4rem;
+            color: #3b82f6;
+            margin-bottom: 15px;
+        }
+
+        .initial-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1e293b;
+        }
+
+        .initial-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        /* Alert Box */
+        .alert-box {
+            background: #f1f5f9;
+            border-radius: 40px;
+            padding: 10px 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #475569;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #0f172a;
+        }
+
+        .nav-btn i {
+            font-size: 1.1rem;
+        }
+
+        .register-btn:hover {
+            background: #22c55e;
+            color: white;
+            border-color: #22c55e;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -8px #22c55e80;
+        }
+
+        .menu-btn:hover {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -8px #3b82f680;
+        }
+
+        /* Rule Text */
+        .rule-text {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px dashed #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Spinner Animation */
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .glass-card {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+
+            .status-name {
+                font-size: 1.5rem;
+            }
+
+            .initial-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Image - Same as index page -->
+    <div class="background">
+        <img src="https://images.pexels.com/photos/24971916/pexels-photo-24971916/free-photo-of-children-in-classroom.jpeg?auto=compress&cs=tinysrgb&h=130" alt="University Lecture Background">
+        <div class="overlay"></div>
+    </div>
+
+    <div class="attendance-container" data-aos="fade-up" data-aos-duration="1000">
+        <div class="glass-card">
+            <h2>
+                <i class="fas fa-camera-reels" style="color: #3b82f6;"></i>
+                Face Attendance
+            </h2>
+
+            <!-- Camera Section -->
+            <div class="camera-section">
+                <div class="camera-status">
+                    <span class="status-dot"></span>
+                    <span id="camera-status-text">Camera Active</span>
+                </div>
+                <div class="video-box">
+                    <img id="video-feed" src="/video_feed" alt="Live Camera Feed">
+                </div>
+            </div>
+
+            <!-- Scan Button -->
+            <button class="scan-btn" onclick="startAttendance()" id="scan-btn">
+                <i class="fas fa-fingerprint"></i>
+                Scan & Mark Attendance
+                <i class="fas fa-arrow-right"></i>
+            </button>
+
+            <!-- Status Display Area -->
+            <div id="attendance-status">
+                <!-- Initial State -->
+                <div class="initial-card">
+                    <div class="initial-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div class="initial-title">Ready to Scan</div>
+                    <div class="initial-subtitle">Click the scan button above to mark attendance</div>
+                    <div class="alert-box">
+                        <i class="fas fa-info-circle"></i>
+                        1 attendance per hour per student
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="nav-buttons">
+                <a href="/register" class="nav-btn register-btn">
+                    <i class="fas fa-user-plus"></i>
+                    New Registration
+                </a>
+                <a href="/" class="nav-btn menu-btn">
+                    <i class="fas fa-grid"></i>
+                    Main Menu
+                </a>
+            </div>
+
+            <!-- Footer Rule -->
+            <div class="rule-text">
+                <i class="fas fa-shield-alt text-success"></i>
+                <span>Secure Face Recognition System</span>
+                <i class="fas fa-lock text-primary"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function startAttendance(){
+            const statusDiv = document.getElementById("attendance-status");
+            const scanBtn = document.getElementById("scan-btn");
+
+            // Disable button and show loading
+            scanBtn.disabled = true;
+            scanBtn.innerHTML = `
+                <i class="fas fa-spinner spinner"></i>
+                Processing...
+            `;
+
+            // Show scanning state
+            statusDiv.innerHTML = `
+                <div class="initial-card">
+                    <div class="initial-icon">
+                        <i class="fas fa-camera" style="color: #3b82f6;"></i>
+                    </div>
+                    <div class="initial-title">Scanning Face</div>
+                    <div class="initial-subtitle">Please look at the camera</div>
+                    <div class="mt-3">
+                        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // API Call
+            fetch('/mark-attendance')
+            .then(res => res.json())
+            .then(data => {
+                let statusHTML = '';
+
+                if(data.status === "success"){
+                    statusHTML = `
+                        <div class="status-card">
+                            <div class="status-icon">
+                                <i class="fas fa-check-circle text-success"></i>
+                            </div>
+                            <div class="status-badge" style="background: #dcfce7; color: #166534; border: 1px solid #86efac;">
+                                <i class="fas fa-check"></i> ATTENDANCE MARKED
+                            </div>
+                            <div class="status-name">${data.name}</div>
+                            <div class="status-time">
+                                <i class="fas fa-calendar-alt"></i> ${new Date().toLocaleDateString()} 
+                                <i class="fas fa-clock ms-2"></i> ${data.time}
+                            </div>
+                        </div>
+                    `;
+                }
+                else if(data.status === "reverified"){
+                    statusHTML = `
+                        <div class="status-card">
+                            <div class="status-icon">
+                                <i class="fas fa-exclamation-triangle text-warning"></i>
+                            </div>
+                            <div class="status-badge" style="background: #fef9c3; color: #854d0e; border: 1px solid #facc15;">
+                                <i class="fas fa-clock"></i> ALREADY VERIFIED
+                            </div>
+                            <div class="status-name">${data.name}</div>
+                            <div class="status-message">Please wait 1 hour</div>
+                        </div>
+                    `;
+                }
+                else{
+                    statusHTML = `
+                        <div class="status-card">
+                            <div class="status-icon">
+                                <i class="fas fa-times-circle text-danger"></i>
+                            </div>
+                            <div class="status-badge" style="background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;">
+                                <i class="fas fa-question"></i> NOT RECOGNIZED
+                            </div>
+                            <div class="status-name">Face Not Identified</div>
+                            <div class="status-message">Please register first</div>
+                        </div>
+                    `;
+                }
+
+                statusDiv.innerHTML = statusHTML;
+                
+                // Reset button
+                scanBtn.disabled = false;
+                scanBtn.innerHTML = `
+                    <i class="fas fa-fingerprint"></i>
+                    Scan & Mark Attendance
+                    <i class="fas fa-arrow-right"></i>
+                `;
+            })
+            .catch(() => {
+                statusDiv.innerHTML = `
+                    <div class="status-card">
+                        <div class="status-icon">
+                            <i class="fas fa-wifi text-danger"></i>
+                        </div>
+                        <div class="status-badge" style="background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;">
+                            <i class="fas fa-exclamation"></i> CONNECTION ERROR
+                        </div>
+                        <div class="status-name">Server Unavailable</div>
+                        <div class="status-message">Please refresh the page</div>
+                    </div>
+                `;
+                
+                scanBtn.disabled = false;
+                scanBtn.innerHTML = `
+                    <i class="fas fa-fingerprint"></i>
+                    Scan & Mark Attendance
+                    <i class="fas fa-arrow-right"></i>
+                `;
+            });
+        }
+
+        // Camera status
+        document.getElementById("video-feed").onload = () => {
+            document.getElementById("camera-status-text").innerHTML = "Camera Connected";
+        };
+    </script>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: true,
+            duration: 800,
+            easing: 'ease-in-out'
+        });
+    </script>
+</body>
+</html>

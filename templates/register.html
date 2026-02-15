@@ -1,0 +1,795 @@
+[file name]: register.html
+[file content begin]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Attendance | Student Registration</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+            background: #0b1120;
+            padding: 20px;
+        }
+
+        /* Background Image with Overlay */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .background img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(11, 17, 32, 0.92) 0%, rgba(25, 33, 50, 0.92) 100%);
+            backdrop-filter: blur(3px);
+        }
+
+        /* Main Container */
+        .register-container {
+            position: relative;
+            z-index: 10;
+            max-width: 550px;
+            width: 100%;
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 40px 35px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* Header */
+        h2 {
+            font-weight: 700;
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 0.95rem;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px dashed #cbd5e1;
+            padding-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Password Verification Section */
+        .password-section {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .lock-icon {
+            font-size: 4rem;
+            color: #3b82f6;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .password-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .password-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+            margin-bottom: 25px;
+        }
+
+        .password-input-group {
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 5px 5px 5px 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .password-input-group:focus-within {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+
+        .password-input-group i {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        .password-input {
+            border: none;
+            padding: 15px 12px;
+            font-size: 1rem;
+            width: 100%;
+            background: transparent;
+        }
+
+        .password-input:focus {
+            outline: none;
+        }
+
+        .toggle-password {
+            background: transparent;
+            border: none;
+            padding: 10px 15px;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        .toggle-password:hover {
+            color: #3b82f6;
+        }
+
+        .verify-btn {
+            background: linear-gradient(105deg, #3b82f6, #2563eb);
+            border: none;
+            border-radius: 60px;
+            padding: 16px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .verify-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -8px #2563eb80;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 10px;
+            background: #fee2e2;
+            border-radius: 40px;
+            border: 1px solid #fecaca;
+        }
+
+        /* Registration Form (Hidden by default) */
+        .registration-form {
+            display: none;
+        }
+
+        .registration-form.visible {
+            display: block;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-label i {
+            color: #3b82f6;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            border: 1.5px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            outline: none;
+        }
+
+        /* Capture Face Section */
+        .capture-section {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #e2e8f0;
+        }
+
+        .capture-btn {
+            background: linear-gradient(105deg, #8b5cf6, #7c3aed);
+            border: none;
+            border-radius: 14px;
+            padding: 14px 20px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .capture-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -8px #8b5cf6b3;
+            background: linear-gradient(105deg, #7c3aed, #6d28d9);
+        }
+
+        .capture-status {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px;
+            background: white;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .capture-status i {
+            color: #8b5cf6;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #0f172a;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .action-btn i {
+            font-size: 1rem;
+        }
+
+        .save-btn {
+            background: #22c55e;
+            color: white;
+            border-color: #22c55e;
+        }
+
+        .save-btn:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -8px #22c55e80;
+            border-color: #16a34a;
+        }
+
+        .cancel-btn {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+
+        .cancel-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -8px #ef444480;
+            border-color: #dc2626;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px dashed #cbd5e1;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #0f172a;
+        }
+
+        .nav-btn i {
+            font-size: 0.95rem;
+        }
+
+        .home-btn:hover {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -8px #3b82f680;
+        }
+
+        .attendance-btn:hover {
+            background: #22c55e;
+            color: white;
+            border-color: #22c55e;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -8px #22c55e80;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            margin-top: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #dbeafe;
+            border-radius: 12px;
+            padding: 12px 15px;
+            margin: 20px 0 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #bfdbfe;
+        }
+
+        .info-box i {
+            color: #2563eb;
+            font-size: 1.2rem;
+        }
+
+        .info-box p {
+            color: #1e40af;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Back to verification link */
+        .back-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .back-link a {
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link a:hover {
+            color: #3b82f6;
+            gap: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 576px) {
+            .glass-card {
+                padding: 30px 20px;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+
+            .password-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Image -->
+    <div class="background">
+        <img src="https://images.pexels.com/photos/24971916/pexels-photo-24971916/free-photo-of-children-in-classroom.jpeg?auto=compress&cs=tinysrgb&h=130" alt="University Lecture Background">
+        <div class="overlay"></div>
+    </div>
+
+    <div class="register-container" data-aos="fade-up" data-aos-duration="1000">
+        <div class="glass-card">
+            <!-- Header -->
+            <h2>
+                <i class="fas fa-user-plus" style="color: #3b82f6;"></i>
+                Student Registration
+            </h2>
+            <div class="subtitle">
+                <i class="fas fa-id-card text-primary"></i>
+                <span id="header-text">Password required</span>
+            </div>
+
+            <!-- Password Verification Section -->
+            <div id="password-section" class="password-section">
+                <div class="lock-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="password-title">Admin Access Only</div>
+                <div class="password-subtitle">Enter password to register new students</div>
+                
+                <div class="password-input-group">
+                    <i class="fas fa-key"></i>
+                    <input type="password" id="password-input" class="password-input" 
+                           placeholder="Enter admin password" onkeypress="handleKeyPress(event)">
+                    <button type="button" class="toggle-password" onclick="togglePassword()">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+
+                <button class="verify-btn" onclick="verifyPassword()">
+                    <i class="fas fa-check-circle"></i>
+                    Verify & Continue
+                </button>
+
+                <div id="password-error" class="error-message" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Incorrect password. Please try again.
+                </div>
+
+                <div class="back-link">
+                    <a href="/">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+
+            <!-- Registration Form (Initially Hidden) -->
+            <div id="registration-form" class="registration-form">
+                <form method="POST" action="/save-student">
+                    <!-- Roll Number -->
+                    <div class="mb-3">
+                        <label for="rollno" class="form-label">
+                            <i class="fas fa-hashtag"></i>
+                            Roll Number
+                        </label>
+                        <input type="text" class="form-control" id="rollno" name="rollno" 
+                               placeholder="e.g., 2024CS101" required>
+                    </div>
+
+                    <!-- Name -->
+                    <div class="mb-3">
+                        <label for="name" class="form-label">
+                            <i class="fas fa-user"></i>
+                            Full Name
+                        </label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               placeholder="Enter student's full name" required>
+                    </div>
+
+                    <!-- Branch -->
+                    <div class="mb-3">
+                        <label for="branch" class="form-label">
+                            <i class="fas fa-graduation-cap"></i>
+                            Branch / Department
+                        </label>
+                        <input type="text" class="form-control" id="branch" name="branch" 
+                               placeholder="e.g., Computer Science" required>
+                    </div>
+
+                    <!-- Capture Face Section -->
+                    <div class="capture-section">
+                        <button type="button" class="capture-btn" onclick="captureFace()">
+                            <i class="fas fa-camera"></i>
+                            Capture Face (100 samples)
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <div id="capture-status" class="capture-status">
+                            <i class="fas fa-info-circle"></i>
+                            Click to start face capture
+                        </div>
+                    </div>
+
+                    <!-- Info Box -->
+                    <div class="info-box">
+                        <i class="fas fa-lightbulb"></i>
+                        <p>Face capture will take 100 photos automatically. Look at the camera.</p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button type="submit" class="action-btn save-btn">
+                            <i class="fas fa-check-circle"></i>
+                            Save Student
+                        </button>
+                        <button type="reset" class="action-btn cancel-btn">
+                            <i class="fas fa-times-circle"></i>
+                            Clear
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Back to verification link -->
+                <div class="back-link">
+                    <a href="#" onclick="showPasswordSection()">
+                        <i class="fas fa-lock"></i>
+                        Lock screen
+                    </a>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons (Always visible) -->
+            <div class="nav-buttons">
+                <a href="/" class="nav-btn home-btn">
+                    <i class="fas fa-home"></i>
+                    Main Menu
+                </a>
+                <a href="/attendance" class="nav-btn attendance-btn">
+                    <i class="fas fa-camera"></i>
+                    Mark Attendance
+                </a>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <i class="fas fa-shield-alt text-success"></i>
+                <span>Secure Face Recognition System</span>
+                <i class="fas fa-lock text-primary"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Admin password (you can change this)
+        const ADMIN_PASSWORD = "admin123";
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('password-input');
+            const toggleIcon = document.querySelector('.toggle-password i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.className = 'fas fa-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.className = 'fas fa-eye';
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                verifyPassword();
+            }
+        }
+
+        function verifyPassword() {
+            const password = document.getElementById('password-input').value;
+            const errorDiv = document.getElementById('password-error');
+            
+            if (password === ADMIN_PASSWORD) {
+                // Correct password - show registration form
+                document.getElementById('password-section').style.display = 'none';
+                document.getElementById('registration-form').classList.add('visible');
+                document.getElementById('header-text').textContent = 'Register New Student';
+                errorDiv.style.display = 'none';
+            } else {
+                // Wrong password - show error
+                errorDiv.style.display = 'flex';
+                document.getElementById('password-input').value = '';
+                document.getElementById('password-input').focus();
+                
+                // Shake animation for wrong password
+                const inputGroup = document.querySelector('.password-input-group');
+                inputGroup.style.borderColor = '#ef4444';
+                inputGroup.style.animation = 'shake 0.5s ease';
+                
+                setTimeout(() => {
+                    inputGroup.style.animation = '';
+                    inputGroup.style.borderColor = '#e2e8f0';
+                }, 500);
+            }
+        }
+
+        function showPasswordSection() {
+            document.getElementById('password-section').style.display = 'block';
+            document.getElementById('registration-form').classList.remove('visible');
+            document.getElementById('header-text').textContent = 'Password required';
+            document.getElementById('password-input').value = '';
+            document.getElementById('password-input').focus();
+        }
+
+        // Shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                50% { transform: translateX(10px); }
+                75% { transform: translateX(-5px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        function captureFace() {
+            var rollno = document.getElementById('rollno').value;
+            var statusDiv = document.getElementById('capture-status');
+            
+            if(!rollno) { 
+                statusDiv.innerHTML = `
+                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                    Please enter Roll Number first
+                `;
+                return; 
+            }
+            
+            statusDiv.innerHTML = `
+                <i class="fas fa-spinner spinner"></i>
+                Capturing face (100 samples)...
+            `;
+
+            // Add spinner style
+            const spinnerStyle = document.createElement('style');
+            spinnerStyle.textContent = `
+                .spinner {
+                    animation: spin 1s linear infinite;
+                }
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(spinnerStyle);
+            
+            fetch('/capture-face?rollno=' + rollno)
+            .then(res => res.text())
+            .then(data => {
+                statusDiv.innerHTML = `
+                    <i class="fas fa-check-circle text-success"></i>
+                    ${data}
+                `;
+            })
+            .catch(err => {
+                statusDiv.innerHTML = `
+                    <i class="fas fa-times-circle text-danger"></i>
+                    Error capturing face
+                `;
+            });
+        }
+
+        // Check if user came from unauthorized access
+        window.onload = function() {
+            // Ensure password section is shown on page load
+            showPasswordSection();
+        };
+    </script>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: true,
+            duration: 800,
+            easing: 'ease-in-out'
+        });
+    </script>
+</body>
+</html>
